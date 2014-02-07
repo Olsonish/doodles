@@ -22,7 +22,7 @@ body {
 
 
 	overflow:auto;
-	padding-bottom: 60px;  /* must be same height as the footer */
+	padding-bottom: 62px;  /* must be same height as the footer */
 
 }
 
@@ -40,7 +40,7 @@ body {
 #footer {
 
 	position: relative;
-	margin-top: -60px; /* negative value of footer height */
+	margin-top: -62px; /* negative value of footer height */
 	height: 60px;
 	clear:both;
 
@@ -51,6 +51,13 @@ body {
 	box-shadow: 0 -2px 9px 3px rgba(0,0,0,.5);
 
 } 
+
+#content {
+
+	margin: 0 auto;
+	width: 960px;
+
+}
 
 
 /* Opera Fix 
@@ -69,21 +76,8 @@ body:before {
  * doodle
  */
 
-body  div.colLeft, body > .colRight {
+svg {
 
-	margin: 5px;
-	float: left;
-
-}
-
-body .colLeft {
-
-	width: 240px;
+	
 
 }
-
-body .colRight {
-
-
-}
-
