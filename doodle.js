@@ -55,12 +55,19 @@ var xScale = d3.time.scale()
                     .domain([rData.data[0][0], rData.data[rData.data.length - 1][0]])
                     .range([0, this.svgWidth]);
 
-var thing = new Date(rData.data[1][0]);
 
-console.log(rData.data[1][0]);
+var min = d3.min(rData.data, function(d) {
+    return d[0];
+});
+
+var max = d3.max(rData.data, function(d) {
+    return d[0];
+});
+
+console.log(min, max);
 
 // use x scale to calculate svg x coord
-console.log(xScale(rData.data[2][0]));
+console.log(xScale(rData.data[0][0]));
 
 
 
