@@ -13,11 +13,17 @@ var rData = {
 };
 
 /**
- * Fix the dates
+ * Fix the dates for y1 and y2
  */
-for (var i = 0, len = rData.data.length; i < len; i++) {
+for (var i = 0, len = rData.data.y1.data.length; i < len; i++) {
 
-    rData.data[i][0] = fixDate(rData.data[i][0]);
+    rData.data.y1.data[i].date = fixDate(rData.data.y1.data[i].date);
+
+}
+
+for (var i = 0, len = rData.data.y2.data.length; i < len; i++) {
+
+    rData.data.y2.data[i].date = fixDate(rData.data.y2.data[i].date);
 
 }
 
@@ -30,6 +36,10 @@ var margin = {
         bottom: 30,
         left: 40
     },
+
+    // y1 and y2 data
+    y1data = rData.data.y1.data,
+    y2data = rData.data.y2.data,
 
     // svg base size
     svgWidth = 960,
@@ -47,30 +57,21 @@ var margin = {
             .attr("width", svgWidth)
             .attr("height", svgHeight);
 
-    console.log(rData.data);
 
 
 
-var xScale = d3.time.scale()
-                    .domain([rData.data[0][0], rData.data[rData.data.length - 1][0]])
+    // get min/max dates from each yaxis data
+    var y1MinDate = d3.min(y1data, function(d) { return d.date; }),
+        y1MaxDate = d3.max(y1data, function(d) { return d.date; });
+
+
+    var xScale = d3.time.scale()
+                    .domain([y1MinDate, y1MaxDate])
                     .range([0, this.svgWidth]);
 
+    console.log(y1data[0].date)
 
-var min = d3.min(rData.data, function(d) {
-    return d[0];
-});
-
-var max = d3.max(rData.data, function(d) {
-    return d[0];
-});
-
-console.log(min, max);
-
-// use x scale to calculate svg x coord
-console.log(xScale(rData.data[0][0]));
-
-
-
+    console.log(xScale(y1data[1].date));
 
 
 
@@ -133,7 +134,7 @@ function generateTestData(count,days) {
 
     // datapoints to be generated = count
     for (var i = 0, tick = 0, len = count; i < len; i++) {
-              
+
         console.log((i * scale));
 
         var set = [],
@@ -144,17 +145,17 @@ function generateTestData(count,days) {
         set.push(time);
 
         data.push(set);
-        
-    
+
+
     }
-    
+
     console.log(dateRange);
     console.log(data[0],data[count - 1]);
 */
 
-    
 
-    data = [
+    // some generated data
+    var gData = [
         ["2004-02-14 16:25:06",119,61],
         ["1992-01-17 00:53:15",94,61],
         ["1989-01-07 16:55:57",109,68],
@@ -187,25 +188,73 @@ function generateTestData(count,days) {
         ["2007-01-24 04:16:36",109,73]
     ];
 
-    // console.log(new Date(data[4][0]));
+    // a key for the test data
+    var gDataKey = ["date","y1","y2"];
 
-    // console.log(data[0] + "  " + data[data.length - 1]);
+    // sort by date
+    gData.sort(function(a,b) {
 
-    data.sort(function(a,b) {
+        // for readability
+        var date = gDataKey.indexOf("date");
 
-        var dateA = new Date(a[0]);
-        var dateB = new Date(b[0]);
+        // fix the dates so this works
+        var dateA = new Date(a[date]);
+        var dateB = new Date(b[date]);
 
-        // return dateB - dateA;
-        return dateA - dateB;
+        // return dateB - dateA; // latest to earliest
+        return dateA - dateB; // earliest to latest
 
     });
 
-    // console.log(data[0] + "  " + data[data.length - 1]);
+    // formatting this data another way
+    var oData = {};
 
-    // console.log("  ");
+    // use gDataKey to make oData keys as objects
+    for (var oKey = 0, kLen = gDataKey.length; oKey < kLen; oKey++) {
 
-    return data;
+        // first item is date so skip that one
+        if (oKey != 0) {
+
+            // new dataset object with key 'data' as array
+            var dataset = oData[gDataKey[oKey]] = {
+                data: []
+            };
+
+            // add data to this set
+            var nData = {};
+            for (var item = 0, dLen = gData.length; item < dLen; item++) {
+
+                // insurance
+                nData = null, nData = {};
+
+                // each key item as ndata item key and each
+                for (var ki = 0, kl = gDataKey.length; ki < kl; ki++) {
+
+                    // date first
+                    if (ki == 0) {
+
+                        nData[gDataKey[ki]] = gData[item][ki];
+
+                    }
+
+                    // value
+                    if (gDataKey[ki] == gDataKey[oKey]) {
+
+                        nData["value"] = gData[item][ki];
+
+                    }
+
+                }
+
+                dataset.data.push(nData);
+
+            }
+
+        }
+
+    }
+
+    return oData;
 
 }
 
