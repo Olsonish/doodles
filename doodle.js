@@ -1,7 +1,7 @@
 /**
  * Create some data
  */
-/*var rData = {
+var rData = {
 
 
     // function(count, days)
@@ -10,8 +10,9 @@
     // data: testData(30,180)
 
 
-};*/
+};
 
+// console.log(rData);
 
 /**
  * Fix the dates for y1 and y2
@@ -141,7 +142,9 @@ function dVal(d) {
     return d.value;
 }
 
-
+function fixDate(date) {
+    return new Date(date);
+}
 
 
 
@@ -192,8 +195,8 @@ var margin = {
     dateFormat = d3.time.format("%Y-%m-%d"),
 
     // set min and max dates
-    minDate = app.currentData.startTime,
-    maxDate = app.currentData.endTime,
+    minDate = new Date(app.currentData.startTime),
+    maxDate = new Date(app.currentData.endTime),
 
     // svg base size
     svgWidth = 960,
@@ -239,6 +242,7 @@ var xScale = d3.time.scale()
                     .domain([minDate, maxDate])
                     .range([0, visWidth]);
 
+
 // setup y scales
 var yScales = [];
 for (var axisId = 0, len = chartDetails.yAxes.length; axisId < len; axisId++) {
@@ -264,7 +268,8 @@ for (var axisId = 0, len = chartDetails.yAxes.length; axisId < len; axisId++) {
 }
 
 // render candlestick
-renderCandleStick();
+// function(yAxes)
+renderCandleStick(app.currentData.data, chartDetails.yAxes);
 
 
 
@@ -333,14 +338,69 @@ function renderYAxis(yScale, axisId) {
 }
 
 
+
+
+
+console.log(chartDetails.yAxes);
+
+
 // draw candlestick groups
-function renderCandleStick() {
+function renderCandleStick(data, yAxes) {
+
+    var y1dataPoint = yAxes[0].dataPoint,
+        y2dataPoint = yAxes[1].dataPoint;
+
+    var col1 = data.cols[y1dataPoint],
+        col2 = data.cols[y2dataPoint];
+
+    var visTranslation = margin.left + "," + margin.top;
+
+    // console.log(y1dataPoint, y2dataPoint);
+    // console.log(col1, col2);
+
+    var csgroup = svg.append("svg:g")
+                     .attr("class", "csgroup")
+                     .attr("transform", "translate(" + visTranslation + ")");
+
+    // d3 date formatter
+    var formatDate = d3.time.format("%x");
 
 
-    /*svg.selectAll("line.stem")
-          .data(data)
-          .enter().append("svg:line")
-          .attr("class", "stem")*/
+    console.log(data);
+
+
+
+    // console.log(col1.index[0])
+    console.log(fixDate(data.measureTime[5]));
+
+    function getXCoords(d) {
+
+        var measureTime = data.measureTime[d];
+
+        return xScale(fixDate(measureTime));
+
+    }
+
+    csgroup.selectAll("line.stem")
+            .data(col1.index)
+            .enter()
+            .append("svg:line")
+            .attr("class", "stem")
+
+            .attr("x1", getXCoords)
+            .attr("y1", 50)
+
+            .attr("x2", getXCoords)
+            .attr("y2", 15)
+
+/*
+            .attr("x1", function(d) { return x(d.timestamp) + 0.25 * (width - 2 * margin)/ data.length; })
+            .attr("x2", function(d) { return x(d.timestamp) + 0.25 * (width - 2 * margin)/ data.length; })
+            .attr("y1", function(d) { return y(d.High); })
+            .attr("y2", function(d) { return y(d.Low); })
+*/
+
+            .attr("stroke", "black");
 
 
 }
