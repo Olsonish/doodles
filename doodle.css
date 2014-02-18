@@ -27,7 +27,7 @@ body {
 }
 
 #header {
-	
+
 	height: 60px;
 	background: rgba(0,0,0,.85);
 	border-bottom: 2px solid rgba(0,0,0,.5);
@@ -50,7 +50,7 @@ body {
 	-webkit-box-shadow: 0 -2px 9px 3px rgba(0,0,0,.5);
 	box-shadow: 0 -2px 9px 3px rgba(0,0,0,.5);
 
-} 
+}
 
 #content {
 
@@ -60,10 +60,10 @@ body {
 }
 
 
-/* Opera Fix 
+/* Opera Fix
    thanks to Maleika (Kohoutec) */
 body:before {
-	
+
 	content:"";
 	height:100%;
 	float:left;
@@ -76,8 +76,9 @@ body:before {
  * doodle
  */
 
-svg {
 
-	
-
+.domain {
+  fill: none;
+  stroke: rgba(0,0,0,.5);
+  stroke-width: 1;
 }
