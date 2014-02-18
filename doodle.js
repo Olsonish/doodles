@@ -266,9 +266,6 @@ for (var axisId = 0, len = chartDetails.yAxes.length; axisId < len; axisId++) {
         dataPoint = chartDetails.yAxes[axisId].dataPoint
         col = data.cols[dataPoint];
 
-    console.log('y scale min: ', col.min);
-    console.log('y scale max: ', col.max);
-
     // this is using ranges
     // show to oren
     var domain = [yRange[axisId].lower, yRange[axisId].upper];
@@ -299,13 +296,6 @@ for (var axisId = 0, len = chartDetails.yAxes.length; axisId < len; axisId++) {
 // render candlestick
 // function(yAxes)
 renderCandleStick(app.currentData.data, chartDetails.yAxes);
-
-
-
-
-
-
-
 
 
 
@@ -379,9 +369,6 @@ function renderCandleStick(data, yAxes) {
 
     var visTranslation = margin.left + "," + margin.top;
 
-    // console.log(y1dataPoint, y2dataPoint);
-    // console.log(col1, col2);
-
     var csgroup = svg.append("svg:g")
                      .attr("class", "csgroup")
                      .attr("transform", "translate(" + visTranslation + ")");
@@ -389,56 +376,73 @@ function renderCandleStick(data, yAxes) {
     // d3 date formatter
     var formatDate = d3.time.format("%x");
 
-
-    // console.log(col1, col2);
-
-
-
+    // the candlestick stem
     csgroup.selectAll("line.stem")
             .data(col1.index)
             .enter()
             .append("svg:line")
             .attr("class", "stem")
 
+            // stroke
             .attr("stroke-width", "2")
             .attr("stroke", "rgba(0,0,0,.25)")
 
+            // top coords
             .attr("x1", getXCoord)
             .attr("y1", getY1Coord)
 
+            // bottom coords
             .attr("x2", getXCoord)
             .attr("y2", getY2Coord)
 
+            // some interactivity and feedback
             .on("mouseover", function(d) {
-
-                console.log(col1.values[d]);
-                console.log(col2.values[d]);
-
                 d3.select(this)
                     .attr("stroke-width", "4")
                     .attr("stroke", "rgba(0,0,0,1)");
 
-
-
+                console.log(col1.values[d]);
+                console.log(col2.values[d]);
             })
-
             .on("mouseout", function(d) {
-
                 d3.select(this)
                     .attr("stroke-width", "2")
                     .attr("stroke", "rgba(0,0,0,.25)");
-
-
             });
 
 
 
+
+    // y1 dots
+    csgroup.selectAll(".y1dot")
+            .data(col1.index)
+            .enter().append("svg:circle")
+            .attr("class", "dot y1dot")
+            .attr("cx", getXCoord)
+            .attr("cy", getY1Coord)
+            .attr("r", getDotRadius);
+
+    // y2 dots
+    csgroup.selectAll(".y2dot")
+            .data(col1.index)
+            .enter().append("svg:circle")
+            .attr("class", "dot y2dot")
+            .attr("cx", getXCoord)
+            .attr("cy", getY2Coord)
+            .attr("r", getDotRadius);
+
+
+
+    function getDotRadius(d) {
+        return 3;
+    }
 
     function getY1Coord(d) {
 
         var y1Coord = yScales[0](col1.values[d]);
 
         return y1Coord;
+
     }
 
     function getY2Coord(d) {

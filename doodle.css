@@ -82,3 +82,10 @@ body:before {
 	stroke: rgba(0,0,0,.5);
 	stroke-width: 1;
 }
+
+.dot {
+  fill: none;
+  stroke: #000;
+  shape-rendering: auto;
+  stroke-width: 1px;
+}
