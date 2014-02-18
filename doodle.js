@@ -27,6 +27,8 @@ for (var i = 0, len = rData.data.y2.data.length; i < len; i++) {
 
 }
 
+console.log(rData.data);
+
 /**
  * Setup margins then create the SVG
  */
@@ -38,12 +40,17 @@ var margin = {
     },
 
     // y1 and y2 data
-    y1data = rData.data.y1.data,
-    y2data = rData.data.y2.data,
+    y1Data = rData.data.y1.data,
+    y2Data = rData.data.y2.data,
+
+    // date format
+    dateFormat = d3.time.format("%Y-%m-%d"),
 
     // svg base size
     svgWidth = 960,
     svgHeight = 500,
+    chartWidth = svgWidth,
+    chartHeight = (svgHeight - (margin.top + margin.bottom)),
 
     // visualization width will be svg width minus margins
     visWidth = svgWidth - margin.left - margin.right,
@@ -57,21 +64,117 @@ var margin = {
             .attr("width", svgWidth)
             .attr("height", svgHeight);
 
+// get min/max dates from each yaxis data
+var y1MinDate = d3.min(y1Data, dDate),
+    y1MaxDate = d3.max(y1Data, dDate),
+    y1MinVal = d3.min(y1Data, dVal),
+    y1MaxVal = d3.max(y1Data, dVal),
+    y2MinVal = d3.min(y2Data, dVal),
+    y2MaxVal = d3.max(y2Data, dVal);
 
-
-
-    // get min/max dates from each yaxis data
-    var y1MinDate = d3.min(y1data, function(d) { return d.date; }),
-        y1MaxDate = d3.max(y1data, function(d) { return d.date; });
-
-
-    var xScale = d3.time.scale()
+// Scales
+var xScale = d3.time.scale()
                     .domain([y1MinDate, y1MaxDate])
-                    .range([0, this.svgWidth]);
+                    .range([0, svgWidth]);
 
-    console.log(y1data[0].date)
+var y1Scale = d3.scale.linear()
+                .domain([d3.min(data.map(function(x) {return x["Low"];})), d3.max(data.map(function(x){return x["High"];}))])
+                // .domain([y1MinVal, y1MaxVal])
+                .range([chartHeight, 0]);
 
-    console.log(xScale(y1data[1].date));
+/*var y2Scale = d3.scale.linear()
+                .domain([y2MinVal, y2MaxVal])
+                .range([chartHeight, 0]);*/
+
+
+// Axis
+var xAxis = d3.svg.axis()
+                  .scale(xScale)
+                  .orient("bottom");
+
+var y1Axis = d3.svg.axis()
+                   .scale(y1Scale)
+                   .orient("left");
+
+/*var y2Axis = d3.svg.axis()
+                   .scale(y2Scale)
+                   .orient("left");*/
+
+
+// Axis Translation
+var xAxisCoords = (margin.left) + ',' + (svgHeight - (margin.top + margin.bottom));
+var y1AxisCoords = margin.left + "," + margin.top;
+/*var y2AxisCoords = (svgWidth - (margin.right)) + "," + margin.top;*/
+
+
+// Append Axis
+var xAxisGroup = svg.append("svg:g")
+                    .attr("class", "x axis")
+                    .attr("transform", "translate(" + xAxisCoords + ")")
+                    .call(xAxis)
+                    .selectAll('text')
+                        .attr('style', 'font-size:75%;');
+
+var y1AxisGroup = this.svg.append("svg:g")
+                        .attr("class", "y axis grid")
+                        .attr("transform", "translate(" + y1AxisCoords + ")")
+                        .call(y1Axis)
+                        .selectAll("text")
+                            .attr("transform", "translate(-10,0)");
+
+/*var y2AxisGroup = this.svg.append("svg:g")
+                        .attr("class", "y axis grid")
+                        .attr("transform", "translate(" + y2AxisCoords + ")")
+                        .call(y2Axis)
+                        .selectAll("text")
+                            .attr("transform", "translate(-10,0)");*/
+
+
+
+
+function csGetX(d) {
+    return xScale(d.date);
+}
+
+
+
+
+
+
+svg.selectAll("line.x")
+           .data(y1Data)
+           .enter().append("svg:line")
+           .attr("class", "x")
+           .attr("x1", csGetX)
+           .attr("x2", csGetX)
+           .attr("y1", function(d) { return y1Scale(d.value); })
+           .attr("y2", function(d) { return y2Scale(d.value); })
+           .attr("stroke", "#ccc");
+
+
+
+
+
+
+
+
+/**
+ * For d3
+ */
+function dDate(d) {
+    return d.date;
+}
+
+function dVal(d) {
+    return d.value;
+}
+
+
+
+
+
+
+
 
 
 
