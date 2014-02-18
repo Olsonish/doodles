@@ -178,14 +178,12 @@ var chartDetails = app.currentData.visualizations[1];
 
 
 
-
-
 // Setup margins then create the SVG
 var margin = {
         top: 50,
-        right: 25,
+        right: 40,
         bottom: 50,
-        left: 25
+        left: 40
     },
 
     // padding for later use
@@ -216,16 +214,33 @@ var margin = {
               .attr("height", svgHeight);
 
 
+// data didn't give us y1 and y2 range so make some up
+// run this by oren
+var yRange = [
+    {
+        "upper": 220,
+        "lower": 40
+    },
+    {
+        "upper": 180,
+        "lower": 20
+    }
+];
+
+
+
+
 // setup y extents
 var yAxisInfo = [];
 
 for (var i = 0, len = chartDetails.yAxes.length; i < len; i++) {
 
-    var axis = chartDetails.yAxes[i],
+    var data = app.currentData.data,
+        axis = chartDetails.yAxes[i],
         axisData = {};
 
-    axisData.min = app.currentData.data.cols[axis.dataPoint].min;
-    axisData.max = app.currentData.data.cols[axis.dataPoint].max;
+    axisData.min = data.cols[axis.dataPoint].min;
+    axisData.max = data.cols[axis.dataPoint].max;
 
     var vSize = axisData.max - axisData.min;
 
@@ -247,8 +262,22 @@ var xScale = d3.time.scale()
 var yScales = [];
 for (var axisId = 0, len = chartDetails.yAxes.length; axisId < len; axisId++) {
 
+    var data = app.currentData.data,
+        dataPoint = chartDetails.yAxes[axisId].dataPoint
+        col = data.cols[dataPoint];
+
+    console.log('y scale min: ', col.min);
+    console.log('y scale max: ', col.max);
+
+    // this is using ranges
+    // show to oren
+    var domain = [yRange[axisId].lower, yRange[axisId].upper];
+
+
     var scale = d3.scale.linear()
-                        .domain([yAxisInfo[axisId].min, yAxisInfo[axisId].max])
+                        //.domain([col.min, col.max])
+                        // .domain([20, 180])
+                        .domain(domain)
                         .range([visHeight, 0]);
 
     yScales.push(scale);
@@ -339,11 +368,6 @@ function renderYAxis(yScale, axisId) {
 
 
 
-
-
-console.log(chartDetails.yAxes);
-
-
 // draw candlestick groups
 function renderCandleStick(data, yAxes) {
 
@@ -366,20 +390,9 @@ function renderCandleStick(data, yAxes) {
     var formatDate = d3.time.format("%x");
 
 
-    console.log(data);
+    // console.log(col1, col2);
 
 
-
-    // console.log(col1.index[0])
-    console.log(fixDate(data.measureTime[5]));
-
-    function getXCoords(d) {
-
-        var measureTime = data.measureTime[d];
-
-        return xScale(fixDate(measureTime));
-
-    }
 
     csgroup.selectAll("line.stem")
             .data(col1.index)
@@ -387,21 +400,62 @@ function renderCandleStick(data, yAxes) {
             .append("svg:line")
             .attr("class", "stem")
 
-            .attr("x1", getXCoords)
-            .attr("y1", 50)
+            .attr("stroke-width", "2")
+            .attr("stroke", "rgba(0,0,0,.25)")
 
-            .attr("x2", getXCoords)
-            .attr("y2", 15)
+            .attr("x1", getXCoord)
+            .attr("y1", getY1Coord)
 
-/*
-            .attr("x1", function(d) { return x(d.timestamp) + 0.25 * (width - 2 * margin)/ data.length; })
-            .attr("x2", function(d) { return x(d.timestamp) + 0.25 * (width - 2 * margin)/ data.length; })
-            .attr("y1", function(d) { return y(d.High); })
-            .attr("y2", function(d) { return y(d.Low); })
-*/
+            .attr("x2", getXCoord)
+            .attr("y2", getY2Coord)
 
-            .attr("stroke", "black");
+            .on("mouseover", function(d) {
 
+                console.log(col1.values[d]);
+                console.log(col2.values[d]);
+
+                d3.select(this)
+                    .attr("stroke-width", "4")
+                    .attr("stroke", "rgba(0,0,0,1)");
+
+
+
+            })
+
+            .on("mouseout", function(d) {
+
+                d3.select(this)
+                    .attr("stroke-width", "2")
+                    .attr("stroke", "rgba(0,0,0,.25)");
+
+
+            });
+
+
+
+
+    function getY1Coord(d) {
+
+        var y1Coord = yScales[0](col1.values[d]);
+
+        return y1Coord;
+    }
+
+    function getY2Coord(d) {
+
+        var y2Coord = yScales[0](col2.values[d]);
+
+        return y2Coord;
+
+    }
+
+    function getXCoord(d) {
+
+        var measureTime = data.measureTime[d];
+
+        return xScale(fixDate(measureTime));
+
+    }
 
 }
 
