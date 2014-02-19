@@ -84,8 +84,7 @@ body:before {
 }
 
 .dot {
-  fill: none;
-  stroke: #000;
+  fill: white;
   shape-rendering: auto;
-  stroke-width: 1px;
+  stroke-width: 1.5px;
 }

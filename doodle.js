@@ -377,7 +377,7 @@ function renderCandleStick(data, yAxes) {
     var formatDate = d3.time.format("%x");
 
     // the candlestick stem
-    csgroup.selectAll("line.stem")
+    /*csgroup.selectAll("line.stem")
             .data(col1.index)
             .enter()
             .append("svg:line")
@@ -393,24 +393,7 @@ function renderCandleStick(data, yAxes) {
 
             // bottom coords
             .attr("x2", getXCoord)
-            .attr("y2", getY2Coord)
-
-            // some interactivity and feedback
-            .on("mouseover", function(d) {
-                d3.select(this)
-                    .attr("stroke-width", "4")
-                    .attr("stroke", "rgba(0,0,0,1)");
-
-                console.log(col1.values[d]);
-                console.log(col2.values[d]);
-            })
-            .on("mouseout", function(d) {
-                d3.select(this)
-                    .attr("stroke-width", "2")
-                    .attr("stroke", "rgba(0,0,0,.25)");
-            });
-
-
+            .attr("y2", getY2Coord);
 
 
     // y1 dots
@@ -429,12 +412,120 @@ function renderCandleStick(data, yAxes) {
             .attr("class", "dot y2dot")
             .attr("cx", getXCoord)
             .attr("cy", getY2Coord)
+            .attr("fill", "white")
             .attr("r", getDotRadius);
+
+    // some interactivity and feedback
+    csgroup.selectAll("line.stem")
+        .on("mouseover", function(d) {
+            d3.select(this)
+                .attr("stroke-width", "4")
+                .attr("stroke", "rgba(0,0,0,1)");
+
+            console.log(col1.values[d]);
+            console.log(col2.values[d]);
+        })
+        .on("mouseout", function(d) {
+            d3.select(this)
+                .attr("stroke-width", "2")
+                .attr("stroke", "rgba(0,0,0,.25)");
+        });*/
+
+
+
+
+
+
+
+
+
+
+    // second attempt except grouped
+    var csgroup2 = svg.append("svg:g")
+                     .attr("class", "csgroup2")
+                     .attr("transform", "translate(" + visTranslation + ")");
+
+
+    csgroup2.selectAll("g.stick")
+        .data(col1.index)
+        .enter()
+        .append("svg:g")
+        .attr("class", "stick");
+
+    // render line before dots so dots are on top
+    csgroup2.selectAll("g.stick")
+        .append("svg:line")
+            .attr("class", "stem")
+            .attr("stroke-width", "1.5")
+            .attr("stroke", "rgba(0,0,0,.25)")
+            .attr("x1", getXCoord)
+            .attr("y1", getY1Coord)
+            .attr("x2", getXCoord)
+            .attr("y2", getY2Coord);
+
+    csgroup2.selectAll("g.stick")
+        .append("svg:circle")
+            .attr("class", "dot ydot1")
+            .attr("cx", getXCoord)
+            .attr("cy", getY1Coord)
+            .attr("r", getDotRadius)
+            .attr("fill", "white")
+            .attr("stroke-width", "1.5")
+            .attr("stroke", "rgba(0,0,0,.25)");
+
+    csgroup2.selectAll("g.stick")
+        .append("svg:circle")
+            .attr("class", "dot ydot2")
+            .attr("cx", getXCoord)
+            .attr("cy", getY2Coord)
+            .attr("r", getDotRadius)
+            .attr("fill", "white")
+            .attr("stroke-width", "1.5")
+            .attr("stroke", "rgba(0,0,0,.25)");
+
+    csgroup2.selectAll("g.stick")
+        .on("mouseover", function(d) {
+
+            d3.select(this)
+                .selectAll("circle")
+                    .attr("stroke-width", "4")
+                    .attr("stroke", "rgba(0,0,255,1)");
+
+            d3.select(this)
+                .selectAll("line")
+                    .attr("stroke-width", "4")
+                    .attr("stroke", "rgba(0,0,255,1)");
+
+            console.log(col1.values[d]);
+            console.log(col2.values[d]);
+
+        })
+        .on("mouseout", function(d) {
+
+            d3.select(this)
+                .selectAll("circle")
+                    .attr("stroke-width", "1.5")
+                    .attr("stroke", "rgba(0,0,0,.25)");
+
+            d3.select(this)
+                .selectAll("line")
+                    .attr("stroke-width", "1.5")
+                    .attr("stroke", "rgba(0,0,0,.25)");
+
+        });
+
+
+
+
+
+
+
+
 
 
 
     function getDotRadius(d) {
-        return 3;
+        return 6;
     }
 
     function getY1Coord(d) {
