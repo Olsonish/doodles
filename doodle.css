@@ -75,8 +75,6 @@ body:before {
 /**
  * doodle
  */
-
-
 .domain {
 	fill: none;
 	stroke: rgba(0,0,0,.5);
@@ -86,5 +84,11 @@ body:before {
 .dot {
   fill: white;
   shape-rendering: auto;
-  stroke-width: 1.5px;
+}
+
+
+
+/* tooltip */
+.tooltip {
+	background: rgba(0,0,0,.5);
 }

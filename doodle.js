@@ -285,7 +285,7 @@ for (var axisId = 0, len = chartDetails.yAxes.length; axisId < len; axisId++) {
 // render x axis
 renderXAxis(xScale);
 
-// render y axis
+// render y axes
 for (var axisId = 0, len = chartDetails.yAxes.length; axisId < len; axisId++) {
 
     // function(scale, id)
@@ -296,7 +296,6 @@ for (var axisId = 0, len = chartDetails.yAxes.length; axisId < len; axisId++) {
 // render candlestick
 // function(yAxes)
 renderCandleStick(app.currentData.data, chartDetails.yAxes);
-
 
 
 // xaxis render function
@@ -356,8 +355,6 @@ function renderYAxis(yScale, axisId) {
 
 }
 
-
-
 // draw candlestick groups
 function renderCandleStick(data, yAxes) {
 
@@ -369,91 +366,41 @@ function renderCandleStick(data, yAxes) {
 
     var visTranslation = margin.left + "," + margin.top;
 
-    var csgroup = svg.append("svg:g")
-                     .attr("class", "csgroup")
-                     .attr("transform", "translate(" + visTranslation + ")");
-
     // d3 date formatter
     var formatDate = d3.time.format("%x");
 
     // the candlestick stem
-    /*csgroup.selectAll("line.stem")
-            .data(col1.index)
-            .enter()
-            .append("svg:line")
-            .attr("class", "stem")
-
-            // stroke
-            .attr("stroke-width", "2")
-            .attr("stroke", "rgba(0,0,0,.25)")
-
-            // top coords
-            .attr("x1", getXCoord)
-            .attr("y1", getY1Coord)
-
-            // bottom coords
-            .attr("x2", getXCoord)
-            .attr("y2", getY2Coord);
-
-
-    // y1 dots
-    csgroup.selectAll(".y1dot")
-            .data(col1.index)
-            .enter().append("svg:circle")
-            .attr("class", "dot y1dot")
-            .attr("cx", getXCoord)
-            .attr("cy", getY1Coord)
-            .attr("r", getDotRadius);
-
-    // y2 dots
-    csgroup.selectAll(".y2dot")
-            .data(col1.index)
-            .enter().append("svg:circle")
-            .attr("class", "dot y2dot")
-            .attr("cx", getXCoord)
-            .attr("cy", getY2Coord)
-            .attr("fill", "white")
-            .attr("r", getDotRadius);
-
-    // some interactivity and feedback
-    csgroup.selectAll("line.stem")
-        .on("mouseover", function(d) {
-            d3.select(this)
-                .attr("stroke-width", "4")
-                .attr("stroke", "rgba(0,0,0,1)");
-
-            console.log(col1.values[d]);
-            console.log(col2.values[d]);
-        })
-        .on("mouseout", function(d) {
-            d3.select(this)
-                .attr("stroke-width", "2")
-                .attr("stroke", "rgba(0,0,0,.25)");
-        });*/
-
-
-
-
-
-
-
-
-
-
-    // second attempt except grouped
-    var csgroup2 = svg.append("svg:g")
-                     .attr("class", "csgroup2")
+    var csgroup = svg.append("svg:g")
+                     .attr("class", "csgroup")
                      .attr("transform", "translate(" + visTranslation + ")");
 
 
-    csgroup2.selectAll("g.stick")
+    csgroup.selectAll("g.stick")
         .data(col1.index)
         .enter()
         .append("svg:g")
         .attr("class", "stick");
 
     // render line before dots so dots are on top
-    csgroup2.selectAll("g.stick")
+    
+    // last item rendered will be on top
+    
+    // transparent area underneath for extra contact near line
+    csgroup.selectAll("g.stick")
+        .append("svg:rect")
+            .attr("class", "contact")
+            .attr("fill", "rgba(0,0,0,.05)")
+            .attr("width", "5")
+            .attr("height", function(d) {
+                return getY2Coord(d) - getY1Coord(d);
+            })
+            .attr("x", function(d) { 
+                return getXCoord(d) - 2.5;
+            })
+            .attr("y", getY1Coord);
+
+    // y1 to y2 line
+    csgroup.selectAll("g.stick")
         .append("svg:line")
             .attr("class", "stem")
             .attr("stroke-width", "1.5")
@@ -463,7 +410,8 @@ function renderCandleStick(data, yAxes) {
             .attr("x2", getXCoord)
             .attr("y2", getY2Coord);
 
-    csgroup2.selectAll("g.stick")
+    // y1 dot
+    csgroup.selectAll("g.stick")
         .append("svg:circle")
             .attr("class", "dot ydot1")
             .attr("cx", getXCoord)
@@ -473,7 +421,8 @@ function renderCandleStick(data, yAxes) {
             .attr("stroke-width", "1.5")
             .attr("stroke", "rgba(0,0,0,.25)");
 
-    csgroup2.selectAll("g.stick")
+    // y2 dot 
+    csgroup.selectAll("g.stick")
         .append("svg:circle")
             .attr("class", "dot ydot2")
             .attr("cx", getXCoord)
@@ -483,29 +432,62 @@ function renderCandleStick(data, yAxes) {
             .attr("stroke-width", "1.5")
             .attr("stroke", "rgba(0,0,0,.25)");
 
-    csgroup2.selectAll("g.stick")
+    csgroup.selectAll("g.stick")
         .on("mouseover", function(d) {
 
             d3.select(this)
                 .selectAll("circle")
-                    .attr("stroke-width", "4")
-                    .attr("stroke", "rgba(0,0,255,1)");
+                    //.transition()
+                        .attr("stroke-width", "3")
+                        .attr("stroke", "rgba(0,0,255,1)")
+                        //.attr("r", (getDotRadius(d) - 5))
+                        ;
 
             d3.select(this)
                 .selectAll("line")
-                    .attr("stroke-width", "4")
+                    .attr("stroke-width", "3")
                     .attr("stroke", "rgba(0,0,255,1)");
 
-            console.log(col1.values[d]);
-            console.log(col2.values[d]);
+            d3.select(this)
+                .append("svg:title")
+                .text(function(d) {
+
+                    console.log(col1);
+
+                    var min = d3.round(col1.min),
+                        max = d3.round(col1.max),
+                        average = d3.round(col1.total / col1.index.length);
+
+                    // y1 value
+                    var y1val = "y1: " + d3.round(col1.values[d]) + " ";
+
+                    // y2 value
+                    var y2val = " y2: " + d3.round(col2.values[d]);
+
+                    var label = y1val + "/" + y2val;
+
+                    label += " ( min: " + min;
+                    label += " | max: " + max;
+                    label += " | average: " + average + " )";
+
+
+                    return label;
+
+                });
+
+
 
         })
         .on("mouseout", function(d) {
 
             d3.select(this)
                 .selectAll("circle")
-                    .attr("stroke-width", "1.5")
-                    .attr("stroke", "rgba(0,0,0,.25)");
+                    //.transition()
+                        //.style("color", "red")
+                        .attr("stroke-width", "1.5")
+                        .attr("stroke", "rgba(0,0,0,.25)")
+                        //.attr("r", (getDotRadius(d) + 5))
+                        ;
 
             d3.select(this)
                 .selectAll("line")
@@ -513,16 +495,6 @@ function renderCandleStick(data, yAxes) {
                     .attr("stroke", "rgba(0,0,0,.25)");
 
         });
-
-
-
-
-
-
-
-
-
-
 
     function getDotRadius(d) {
         return 6;
