@@ -374,7 +374,7 @@ function renderCandleStick(data, yAxes) {
                      .attr("class", "csgroup")
                      .attr("transform", "translate(" + visTranslation + ")");
 
-
+    // this candlestick group
     csgroup.selectAll("g.stick")
         .data(col1.index)
         .enter()
@@ -452,7 +452,7 @@ function renderCandleStick(data, yAxes) {
                 .append("svg:title")
                 .text(function(d) {
 
-                    console.log(col1);
+                    // console.log(col1);
 
                     var min = d3.round(col1.min),
                         max = d3.round(col1.max),
@@ -469,7 +469,6 @@ function renderCandleStick(data, yAxes) {
                     label += " ( min: " + min;
                     label += " | max: " + max;
                     label += " | average: " + average + " )";
-
 
                     return label;
 
