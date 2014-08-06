@@ -1,0 +1,43 @@
+body {
+
+    padding: 0;
+    margin: 0;
+
+    background: rgb(35,45,60);
+    color: white;
+
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 12px; font-size: 100%;
+
+    -webkit-box-shadow:inset 0 0 250px 25px rgba(0,0,0,.5);
+    box-shadow:inset 0 0 250px 25px rgba(0,0,0,.5);
+
+}
+
+#wrap {
+    
+    margin: 0 auto;
+    width: 960px;
+
+}
+
+#view {
+    
+    padding: 5px 0;
+
+}
+
+.svgcmp {
+
+    margin: 10px 0;
+
+    -webkit-border-radius: 5px 5px 5px 5px;
+    border-radius: 5px 5px 5px 5px;
+
+    background: rgba(0,0,0,.8);
+
+}
+
+.svgcmp svg {
+
+}

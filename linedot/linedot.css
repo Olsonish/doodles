@@ -1,0 +1,26 @@
+html {
+	background: rgba(0,0,0,.20);
+}
+
+#svg, #toolbar {
+	width: 900;
+	margin: 30px auto;
+	-webkit-border-radius: 5px 5px 5px 5px;
+	border-radius: 5px 5px 5px 5px;
+	background: rgba(255,255,255,.80);
+	-webkit-box-shadow: 0 0 15px 5px rgba(0,0,0,.05);
+	box-shadow: 0 0 15px 5px rgba(0,0,0,.05);
+}
+
+button {
+	margin: 10;
+}
+
+svg path {
+	stroke-width: 1;
+}
+
+svg .line path {
+	fill: none;
+}
+
