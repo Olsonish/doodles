@@ -1,0 +1,209 @@
+<!doctype html>
+<html class="no-js" lang="" ng-app="nlApp">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>snow-angnl</title>
+
+    <!-- google font CORS denied as less import-->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet/less" type="text/css" href="snow-angnl.less" />
+  </head>
+
+  <body>
+
+    <!-- main nav -->
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+
+        <!-- .navbar-header -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">
+            <img alt="ServiceNow" src="images/snow-logo.png">
+          </a>
+        </div>
+        <!-- /.navbar-header -->
+
+        <!-- navbar-collapse -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li><a href="#Solutions">Solutions</a></li>
+            <li><a href="#Wins">Wins</a></li>
+            <li><a href="#People">People</a></li>
+            <li><a href="#DemoCenter">Demo Center</a></li>
+          </ul>
+
+          <!-- .navbar-right -->
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="#Profile">
+                <img src="images/avatar.png" alt="Profile" id="profile-avatar">
+                &nbsp;Cory Micek
+              </a>
+            </li>
+            <li>
+              <a href="#Logout">Log Out</a>
+            </li>
+          </ul>
+          <!-- /.navbar-right -->
+        </div>
+        <!-- /.navbar-collapse -->
+
+      </div>
+    </nav>
+    <!-- /main nav -->
+
+    <!-- top search -->
+    <div id="nav-search">
+      <form>
+        <div class="input-group col-md-12">
+          <input type="text" class="form-control input-lg" placeholder="Search Solution Center..." />
+          <span class="input-group-btn">
+            <button class="btn btn-info btn-lg" type="button">
+              <i class="glyphicon glyphicon-search"></i>
+            </button>
+          </span>
+        </div>
+      </form>
+    </div>
+    <!-- / top search -->
+
+    <!-- welcome-hero -->
+    <div id="welcome-hero">
+      <div class="container-fluid">
+      <center>
+        <h3>Welcome, <span class="name">Cory!</span>&nbsp; What would you like to accomplish today?</h3>
+      </center>
+      </div>
+    </div>
+    <!-- /welcome-hero -->
+
+    <!-- natural language form -->
+    <div id="nlForm" class="row" ng-controller="nlController as ctrl">
+      <div class="col-md-12">
+        <center>
+          <h2>
+            I need a 
+            <div class="nl-field" ng-class="{'nl-field-open': nlSolutionOrWinFieldOpen}">
+              <a class="nl-field-toggle" ng-click="nlSolutionOrWinFieldOpenToggle()">{{ solutionOrWin }}</a>
+              <ul ng-mouseleave="solutionOrWinOptionsMouseOut()">
+                <li ng-repeat="(key, value) in solutionOrWinItems" ng-click="nlSolutionOrWinFieldOpenToggle(key)" ng-class="{checked: solutionOrWin == value}">{{value}} <i class="glyphicon glyphicon-ok"></i></li>
+              </ul>
+            </div>
+            for 
+            <div class="nl-field" ng-class="{'nl-field-open': nlIndustryFieldOpen}">
+              <a class="nl-field-toggle" ng-click="nlIndustryFieldOpenToggle()">{{ currentIndustryItem }}</a>
+              <ul ng-mouseleave="industryOptionsMouseOut()">
+                <li ng-repeat="(key, value) in industryItems" ng-click="nlIndustryFieldOpenToggle(key)" ng-class="{checked: currentIndustryItem == value}">{{ value }} <i class="glyphicon glyphicon-ok"></i></li>
+              </ul>
+            </div>
+            <br/>and 
+            <div class="nl-field" ng-class="{'nl-field-open': nlProductFieldOpen}">
+              <a class="nl-field-toggle" ng-click="nlProductFieldOpenToggle()">{{ currentProductItem }}</a>.
+              <ul ng-mouseleave="productItemsMouseOut()">
+                <li ng-repeat="(key, value) in productItems" ng-click="nlProductFieldOpenToggle(key)" ng-class="{checked: currentProductItem == value}">{{ value }} <i class="glyphicon glyphicon-ok"></i></li>
+              </ul>
+            </div></h2>
+          <button class="btn btn-lg" type="button" ng-click="nlFindItClicked()">Find it!</button>
+        </center>
+      </div>
+    </div>
+    <!-- /natural language form -->
+
+    <div class="container-fluid">
+      <div class="row">
+        <hr class="results-hr" id="results-tophr" />
+      </div>
+    </div>
+
+    <!-- results -->
+    <div class="container-fluid" id="nlResults" ng-class="{'showResults':nlSelectionMade}"
+      ng-controller="nlResultsController as ctrl">
+      <div class="row">
+        <div class="col-md-12">
+          <ul>
+            <li ng-repeat="product in products | filter:matchNL()">
+              <a href="#">
+                <span class="resultIndustry"><i class="glyphicon glyphicon-briefcase"></i>
+                {{ product.industry }}:</span><span class="resultTitle">{{ product.product }}</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="row">
+        <hr class="results-hr" id="results-tophr" />
+      </div>
+    </div>
+    <!-- /results -->
+
+    <!-- viewsubmit-solutions -->
+    <div class="container-fluid">
+      <div id="viewsubmit-solutions-wins" class="row">
+        <div class="col-md-12">
+          <div class="col-md-4 col-md-offset-2">
+            <center>
+              <image alt="solution" src="images/solution-p-m@2x.png"></image>
+              <div class="submit-links">
+                <div class="submit-link"><a href="#">Submit a Solution</a></div>
+                <div class="submit-link"><a href="#">View my Solutions</a></div>
+              </div>
+            </center>
+          </div>
+          <div class="col-md-4">
+            <center>
+              <image alt="win" src="images/win-p-m@2x.png" />
+              <div class="submit-links">
+                <div class="submit-link"><a href="#">Submit a Solution Win</a></div>
+                <div class="submit-link"><a href="#">View my Solution Wins</a></div>
+              </div>
+            </center>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /viewsubmit-solutions -->
+
+    <!-- footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8 col-md-offset-2">
+            <div class="row">
+              <div class="col-md-4">
+                <a href="#">Solutions</a><br/>
+                <a href="#">Solution Wins</a><br/>
+                <a href="#">People</a><br/>
+                <a href="#">Enablement</a><br/>
+              </div>
+              <div class="col-md-4">
+                <a href="#">Standard View</a><br/>
+                <a href="#">Demo Center</a><br/>
+              </div>
+              <div class="col-md-4">
+                <a href="#">Create an Incident</a><br/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- /footer -->
+
+
+    <!-- scripts -->
+    <script src="bower_components/less/dist/less.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="snow-angnl.js"></script>
+  </body>
+</html>

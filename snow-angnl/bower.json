@@ -1,0 +1,10 @@
+{
+    "name": "snow-angnl",
+    "version": "0.0.1",
+    "dependencies": {
+        "angular": null,
+        "bootstrap": null,
+        "jquery": null,
+        "less": null
+    }
+}
